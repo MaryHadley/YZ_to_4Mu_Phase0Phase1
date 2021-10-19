@@ -31,7 +31,8 @@ process.ZmuonAnalyzer = cms.EDAnalyzer("ZmuonAnalyzer",
    muonCollection = cms.InputTag("slimmedMuons"),
    electronCollection = cms.InputTag("slimmedElectrons"),
    bits = cms.InputTag("TriggerResults","", "HLT"),
-   objects = cms.InputTag("selectedPatTrigger"),
+   #objects = cms.InputTag("selectedPatTrigger"),
+   objects = cms.InputTag("slimmedPatTrigger"), #corrected 11 Oct. 2021, see email from K.P.
    genParticles = cms.InputTag("prunedGenParticles"),
    vertexCollection = cms.InputTag("offlineSlimmedPrimaryVertices"),
    metTag = cms.InputTag("slimmedMETs"),
@@ -45,7 +46,8 @@ if options.applyZmuonFilter:
    process.ZmuonFilter = cms.EDFilter("ZmuonFilter",
      muonCollection = cms.InputTag("slimmedMuons"),
      bits = cms.InputTag("TriggerResults","", "HLT"),
-     objects = cms.InputTag("selectedPatTrigger"),
+ #    objects = cms.InputTag("selectedPatTrigger"),
+     objects = cms.InputTag("slimmedPatTrigger"),
 #     genParticles = cms.InputTag("prunedGenParticles"), #not needed here
 #     pfCands = cms.InputTag("packedPFCandidates")  #not needed here
      pTCut = cms.double(2.),
@@ -91,6 +93,7 @@ process.source = cms.Source("PoolSource",
    #                                         "file:Y2S3S11_Z_4Mu_HO_SPS_MiniAOD.root",
                                            "file:MC_DPS_2016_YZ_00623223-2B20-AB42-A456-670F9B3875D5.root",
                                            #'file:14907725-2B14-B245-B076-5B04C5C36D55.root',
+      #                                     'file:Y3S3S11_Z_4Mu_HO_SPS_MiniAOD.root',
 
                                     ),
    duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
@@ -98,7 +101,8 @@ process.source = cms.Source("PoolSource",
 
 process.maxEvents = cms.untracked.PSet(
 #   input = cms.untracked.int32(40000)
-#  input = cms.untracked.int32(5)
+  #input = cms.untracked.int32(5)
+# input = cms.untracked.int32(1)
  input=cms.untracked.int32(-1)
   #  input = cms.untracked.int32(3000) #for crab test, just look at 1000 events
 

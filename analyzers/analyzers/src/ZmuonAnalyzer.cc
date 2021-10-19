@@ -84,7 +84,7 @@ private:
    edm::EDGetTokenT<edm::MergeableCounter> nTotalToken_; // need for EventCountProducer
    edm::EDGetTokenT<edm::MergeableCounter> nFilteredToken_; //need for EventCountProducer
    
-   std::unordered_map<std::string,TH1*> histContainer_; //for counters
+   std::unordered_map<std::string,TH1*> histContainer_; //for counters, PU, Cutflow, trigger DR, etc
    
    edm::EDGetTokenT<std::vector<PileupSummaryInfo> > puToken_; //for pileup
    
@@ -200,6 +200,9 @@ private:
    
    std::vector<double> big4MuVtx;
    
+   //trigger matching variable
+   std::vector<int> quadHasHowManyTrigMatches;
+   
 //   std::vector<double> TrkWeightsRecoVtxTrks;
 
 };  
@@ -238,6 +241,7 @@ ZmuonAnalyzer::ZmuonAnalyzer(const edm::ParameterSet& iConfig)
    histContainer_["PU"]                      =  fs->make<TH1F>("PU",      ";Pileup observed;Events",100,0,100);
    histContainer_["PU_True"]                 =  fs->make<TH1F>("PU_True",  ";Pileup true;Events",100,0,100);
    histContainer_["CutFlow"]                 = fs->make<TH1F>("CutFlow",  ";CutFlow;Z+Upsi Candidate",15,0,15);
+   histContainer_["trigDR"]                  = fs->make<TH1F>("trigDR", ";trigMu-RecoMu_DR; num of quads", 500, 0, 5); //May adjust binning!!
    for(std::unordered_map<std::string,TH1*>::iterator it=histContainer_.begin();   it!=histContainer_.end();   it++) it->second->Sumw2(); //call Sumw2 on all the hists in histContainer_   
    
    tree->Branch("event_number", &event_number);
@@ -387,6 +391,9 @@ ZmuonAnalyzer::ZmuonAnalyzer(const edm::ParameterSet& iConfig)
    
    tree->Branch("inv4MuMass", &inv4MuMass);
    tree->Branch("big4MuVtx", &big4MuVtx);
+   
+   //trigger matching variable
+   tree->Branch("quadHasHowManyTrigMatches", &quadHasHowManyTrigMatches);
    
 //   tree->Branch("TrkWeightsRecoVtxTrks", &TrkWeightsRecoVtxTrks);
    
@@ -934,7 +941,172 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 ////            std::cout << "end of muon match thing: " << matched << std::endl;
 ////            }
 
-// *********
+  
+                //****************
+                //trigger matching //NEW PART HERE
+                //****************
+                
+                //Credits to:  https://riptutorial.com/cplusplus/example/11151/find-max-and-min-element-and-respective-index-in-a-vector
+                // https://stackoverflow.com/questions/571394/how-to-find-out-if-an-item-is-present-in-a-stdvector
+                //https://www.techiedelight.com/check-vector-contains-given-element-cpp/
+                 
+                double trigMatchDRCut = 0.1;
+              //  pat::TriggerObjectStandAlone TO;
+                quadHasHowManyTrigMatches.clear();
+                int trigMatched = 0;
+                std::vector<int> minElementIndexVec;
+                std::cout << "Looking at trigger to reco matching module" << std::endl;
+                for (unsigned int iTO = 0; iTO < triggerObjects->size(); iTO++){
+                //  std::cout << "triggerObjects->size()  " << triggerObjects->size() << std::endl;
+                  pat::TriggerObjectStandAlone TO;
+                  TO = triggerObjects->at(iTO);
+                  TO.unpackPathNames(names);
+                 
+                 //Closely adapted from https://github.com/DryRun/BParkingNANO/blob/master/BParkingNano/plugins/MuonTriggerSelector.cc#L115-L123
+                  TO.unpackFilterLabels(iEvent, *triggerBits);
+               //   if(TMath::Abs(TO.pdgId()) != 13) continue; //make sure you are looking at TO muons!
+                  bool isTriggerMuon = false;
+                  for (unsigned h = 0; h < TO.filterIds().size(); ++h)
+	                if(TO.filterIds()[h] == 83){ //83 = muon
+	                  isTriggerMuon = true; 
+	                  break;
+	                }
+	                
+	              if(!isTriggerMuon) continue;   
+                 
+                  
+                  std::vector<double> tempDRVec;
+                  tempDRVec.clear();
+                  
+                  double PI = 3.14159265358979323846; //https://root.cern.ch/root/html524/TMath.html#TMath:Pi
+                  double TWO_PI = 6.28318530717958647692; //two times the pi as defined above
+                  
+                  double tempDEta1Sq = TMath::Power(TO.eta() - iM1->eta(),2);
+                  double tempDEta2Sq = TMath::Power(TO.eta() - iM2->eta(),2);
+                  double tempDEta3Sq = TMath::Power(TO.eta() - iM3->eta(),2);
+                  double tempDEta4Sq = TMath::Power(TO.eta() - iM4->eta(),2);
+                  
+                  //Thanks to David Yu for reminding me to put this protection in place
+                  double tempDPhi1 = fabs(TO.phi() - iM1->phi());
+                  while( tempDPhi1 > PI ){
+                    tempDPhi1 -= TWO_PI;
+                  }
+                  
+                  double tempDPhi2 = fabs(TO.phi() - iM2->phi());
+                  while( tempDPhi2 > PI ){
+                    tempDPhi2 -= TWO_PI;
+                  }
+                  
+                  double tempDPhi3 = fabs(TO.phi() - iM3->phi());
+                  while( tempDPhi3 > PI ){
+                    tempDPhi3 -= TWO_PI;
+                  }
+                  
+                  double tempDPhi4 = fabs(TO.phi() - iM4->phi());
+                  while( tempDPhi4 > PI ){
+                    tempDPhi4 -= TWO_PI;
+                  }
+                  
+                  
+                  double tempDPhi1Sq = TMath::Power(tempDPhi1,2);
+                  double tempDPhi2Sq = TMath::Power(tempDPhi2,2);
+                  double tempDPhi3Sq = TMath::Power(tempDPhi3,2);
+                  double tempDPhi4Sq = TMath::Power(tempDPhi4,2);
+                  
+                  double tempDR1 = TMath::Sqrt(tempDEta1Sq + tempDPhi1Sq);
+                  double tempDR2 = TMath::Sqrt(tempDEta2Sq + tempDPhi2Sq);
+                  double tempDR3 = TMath::Sqrt(tempDEta3Sq + tempDPhi3Sq);
+                  double tempDR4 = TMath::Sqrt(tempDEta4Sq + tempDPhi4Sq);
+                  
+                  
+                  
+           //       double tempDR1 = TMath::Sqrt(TMath::Power(TO.eta() - iM1->eta(),2) + TMath::Power(TO.phi() - iM1->phi(),2));
+            //      double tempDR2 = TMath::Sqrt(TMath::Power(TO.eta() - iM2->eta(),2) + TMath::Power(TO.phi() - iM2->phi(),2));
+              //    double tempDR3 = TMath::Sqrt(TMath::Power(TO.eta() - iM3->eta(),2) + TMath::Power(TO.phi() - iM3->phi(),2));
+                //  double tempDR4 = TMath::Sqrt(TMath::Power(TO.eta() - iM4->eta(),2) + TMath::Power(TO.phi() - iM4->phi(),2));
+                 // std::cout << "Looking at trigger to reco matching module" << std::endl;
+                  
+                  
+        //          std::cout << iTO << " " << tempDR1 << " " << tempDR2 << " " << tempDR3 << " " << tempDR4 << std::endl;
+        //          std::cout << TO.pt() << " " << iM1->pt() << " " << iM2->pt() <<  " " << iM3->pt() <<  " " << iM4->pt() << std::endl;
+
+                  tempDRVec.push_back(tempDR1); tempDRVec.push_back(tempDR2); tempDRVec.push_back(tempDR3); tempDRVec.push_back(tempDR4);
+            //      std::cout << "tempDRVec.at(0)  " << tempDRVec.at(0) << std::endl; 
+                  int minElementIndex = std::min_element(tempDRVec.begin(),tempDRVec.end()) - tempDRVec.begin();
+           //       std::cout << "minElementIndex  " << minElementIndex << std::endl;
+                  
+              //    std::cout << "Collection  " << TO.collection() << std::endl; //this shows us that the duplicates are likely the same muon that has passed
+              //different triggers. The ones that print out as being the same are listed in each case as being part of a different collection each time
+              //To handle the fact that there are duplicates, when we do the matching, we use the more intensive matching I've done below as opposed to the simpler
+              // matching of  if (tempDR1<0.1 || tempDR2<0.1 || tempDR3<0.1 || tempDR4<0.1)
+                 //               matched++;
+                 //that was initially suggested by S.L.
+              
+                
+                  double minElement = *std::min_element(tempDRVec.begin(), tempDRVec.end());
+          //        std::cout << "minElement  " << minElement << std::endl;
+                  
+                  if (trigMatched == 0){
+                    if (minElement < trigMatchDRCut){
+                      trigMatched++;
+                      minElementIndexVec.push_back(minElementIndex);
+                    //  std::cout << "minElementIndexVec.at(0)  " << minElementIndexVec.at(0) << std::endl;
+                    //  std::cout << "trigMatched is   " << trigMatched << std::endl;
+                    }
+                  
+                  }
+                  
+                //  std::vector<int> testVec;
+//                  testVec.push_back(0);
+//                  std::cout << "testVec.at(0)  " << testVec.at(0) << std::endl; 
+//                  if ( std::count(testVec.begin(), testVec.end(), 1) ) {
+//                     std::cout << "true, 1 is found" << std::endl;
+//                  }
+//                  
+//                  if ( std::count(testVec.begin(), testVec.end(), 1) == 0 ) {
+//                     std::cout << "false, 1 is NOT found" << std::endl;
+//                  }
+                 
+           //      std::cout << "minElementIndex is:  " <<  minElementIndex << std::endl;
+           //      for (unsigned int i =0; i < minElementIndexVec.size(); i++){
+             //      std::cout << "minElementIndexVec.at(i)  " << minElementIndexVec.at(i) << std::endl; 
+             //    }
+                 
+                 if (trigMatched > 0){
+               //    std::cout << "Entered test area" << std::endl;
+                   if ( std::count(minElementIndexVec.begin(), minElementIndexVec.end(), minElementIndex) == 0 ){
+                 //    std::cout << "Entered here line 1077" << std::endl; 
+                     if (minElement < trigMatchDRCut){
+                       trigMatched++;
+                       minElementIndexVec.push_back(minElementIndex);
+                     }
+                   
+                   }
+                 }
+                  
+                   
+                  
+         //          if (trigMatched > 0){
+//                      std::cout << "Entered test area" << std::endl;
+//                    // if ( (std::find(minElementIndexVec.begin(), minElementIndexVec.end(), minElementIndex) != minElementIndexVec.end() ) == false
+//                     // && minElement < trigMatchDRCut) {
+//                      if (minElement < trigMatchDRCut){
+//                        if (std::find(minElementIndexVec.begin(), minElementIndexVec.end(), minElementIndex) != minElementIndexVec.end() == false){
+//                         std::cout << "Got here line 1052" << std::endl; 
+//                         trigMatched++;
+//                         minElementIndexVec.push_back(minElementIndex);
+//                      }
+//                     }
+//                   
+//                   }
+                  
+            
+               // quadHasHowManyTrigMatches.push_back(trigMatched);
+                }
+                
+                quadHasHowManyTrigMatches.push_back(trigMatched); //test comment //test comment 2
+
+// *********     
 // VERTEXING 
 // *********
                 const reco::TrackRef track1 = iM1->muonBestTrack();
