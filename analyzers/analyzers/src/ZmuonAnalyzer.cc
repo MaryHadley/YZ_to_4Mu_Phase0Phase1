@@ -178,11 +178,67 @@ private:
 
    std::vector<double> truth_Zmuon_pt, truth_Zmuon_eta, truth_Zmuon_phi;
    std::vector<double> truth_Z_pt, truth_Z_eta, truth_Z_phi, truth_Z_mass, truth_Z_pdgid;
+   std::vector<double> mc_event_number;
+   std::vector<double> mc_run_number;
+   std::vector<unsigned int> mc_lumi_section;
 
    std::vector<double> truth_Upsimuon_pt, truth_Upsimuon_eta, truth_Upsimuon_phi;
    std::vector<double> truth_Upsi_pt, truth_Upsi_eta, truth_Upsi_phi, truth_Upsi_mass;
+   
+   std::vector<double> truth_Upsi2muon_pt, truth_Upsi2muon_eta, truth_Upsi2muon_phi;
+   std::vector<double> truth_Upsi2_pt, truth_Upsi2_eta, truth_Upsi2_phi, truth_Upsi2_mass;
+   
+   std::vector<double> truth_Upsi3muon_pt, truth_Upsi3muon_eta, truth_Upsi3muon_phi;
+   std::vector<double> truth_Upsi3_pt, truth_Upsi3_eta, truth_Upsi3_phi, truth_Upsi3_mass;
+   
+   //Chib0_1P state
+   std::vector<double> truth_Chib0_1P_UPSI_muon_pt, truth_Chib0_1P_UPSI_muon_eta, truth_Chib0_1P_UPSI_muon_phi;
+   std::vector<double> truth_Chib0_1P_pt, truth_Chib0_1P_eta, truth_Chib0_1P_phi;
+   std::vector<double> truth_Chib0_1P_pdgid;
+   std::vector<double>truth_Chib0_1P_mass;
+  
+   
+   std::vector<double>truth_Chib0_1P_UPSI_pt, truth_Chib0_1P_UPSI_eta, truth_Chib0_1P_UPSI_phi;
+   std::vector<double>truth_Chib0_1P_UPSI_pdgid;
+   std::vector<double>truth_Chib0_1P_UPSI_mass;
+   
+   std::vector<double>truth_Chib0_1P_photon_pt, truth_Chib0_1P_photon_eta, truth_Chib0_1P_photon_phi;
+   std::vector<double>truth_Chib0_1P_photon_pdgid;
+   
+   //Chib1_1P state
+   std::vector<double>truth_Chib1_1P_UPSI_muon_pt, truth_Chib1_1P_UPSI_muon_eta, truth_Chib1_1P_UPSI_muon_phi;
+   
+   std::vector<double>truth_Chib1_1P_pt, truth_Chib1_1P_eta, truth_Chib1_1P_phi;
+   
+   std::vector<double>truth_Chib1_1P_pdgid;
+   std::vector<double>truth_Chib1_1P_mass;
+   
+   std::vector<double>truth_Chib1_1P_UPSI_pt, truth_Chib1_1P_UPSI_eta, truth_Chib1_1P_UPSI_phi;
+   std::vector<double>truth_Chib1_1P_UPSI_pdgid;
+   std::vector<double>truth_Chib1_1P_UPSI_mass;
+   
+  std::vector<double>truth_Chib1_1P_photon_pt, truth_Chib1_1P_photon_eta, truth_Chib1_1P_photon_phi;
+  std::vector<double>truth_Chib1_1P_photon_pdgid;
+  
+  //Chib2_1P state
+  std::vector<double>truth_Chib2_1P_UPSI_muon_pt, truth_Chib2_1P_UPSI_muon_eta, truth_Chib2_1P_UPSI_muon_phi;
+  
+  std::vector<double>truth_Chib2_1P_pt,truth_Chib2_1P_eta, truth_Chib2_1P_phi;
+  std::vector<double>truth_Chib2_1P_pdgid;
+  std::vector<double>truth_Chib2_1P_mass;
+  
+  std::vector<double>truth_Chib2_1P_UPSI_pt, truth_Chib2_1P_UPSI_eta, truth_Chib2_1P_UPSI_phi;
+  std::vector<double>truth_Chib2_1P_UPSI_pdgid;
+  std::vector<double>truth_Chib2_1P_UPSI_mass;
+  
+  std::vector<double>truth_Chib2_1P_photon_pt,truth_Chib2_1P_photon_eta, truth_Chib2_1P_photon_phi;
+  std::vector<double>truth_Chib2_1P_photon_pdgid;
+   
+   
 
    std::vector<double> truth_Upsi_pdgid;
+   std::vector<double> truth_Upsi2_pdgid;
+   std::vector<double> truth_Upsi3_pdgid;
    
    std::vector<double> loop_enter_check;
 
@@ -218,9 +274,9 @@ ZmuonAnalyzer::ZmuonAnalyzer(const edm::ParameterSet& iConfig)
    genParticlesToken_ = consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genParticles"));
    pfToken_ = consumes<pat::PackedCandidateCollection>(iConfig.getParameter<edm::InputTag>("pfCands"));
    
-   if (isMC){
-     puToken_ = consumes<std::vector<PileupSummaryInfo>>(edm::InputTag("slimmedAddPileupInfo"));  //hard coding this because I doubt I will change it, for pileup HARDCODED 
-   }
+   
+   puToken_ = consumes<std::vector<PileupSummaryInfo>>(edm::InputTag("slimmedAddPileupInfo"));  //hard coding this because I doubt I will change it, for pileup HARDCODED 
+   
    rhoToken_ = consumes<double>(iConfig.getParameter<edm::InputTag>("rho"));
   
    nTotalToken_ = consumes<edm::MergeableCounter, // for EventCountProducer
@@ -240,8 +296,8 @@ ZmuonAnalyzer::ZmuonAnalyzer(const edm::ParameterSet& iConfig)
    histContainer_["nEventsFilteredCounter"]  = fs->make<TH1F>("nEventsFilteredCounter", ";nEventsFilteredCounter; nEvents",2,0,2);
    histContainer_["PU"]                      =  fs->make<TH1F>("PU",      ";Pileup observed;Events",100,0,100);
    histContainer_["PU_True"]                 =  fs->make<TH1F>("PU_True",  ";Pileup true;Events",100,0,100);
-   histContainer_["CutFlow"]                 = fs->make<TH1F>("CutFlow",  ";CutFlow;Z+Upsi Candidate",15,0,15);
-   histContainer_["trigDR"]                  = fs->make<TH1F>("trigDR", ";trigMu-RecoMu_DR; num of quads", 500, 0, 5); //May adjust binning!!
+   histContainer_["CutFlow"]                 = fs->make<TH1F>("CutFlow",  ";CutFlow;Z+Upsi Candidate",20,0,20);
+  // histContainer_["trigDR"]                  = fs->make<TH1F>("trigDR", ";trigMu-RecoMu_DR; num of quads", 500, 0, 5); //May adjust binning!!
    for(std::unordered_map<std::string,TH1*>::iterator it=histContainer_.begin();   it!=histContainer_.end();   it++) it->second->Sumw2(); //call Sumw2 on all the hists in histContainer_   
    
    tree->Branch("event_number", &event_number);
@@ -419,7 +475,92 @@ ZmuonAnalyzer::ZmuonAnalyzer(const edm::ParameterSet& iConfig)
    treemc->Branch("truth_Upsi_phi",  &truth_Upsi_phi);
    treemc->Branch("truth_Upsi_mass", &truth_Upsi_mass);
    treemc->Branch("truth_Upsi_pdgid", &truth_Upsi_pdgid);
+   
+   treemc->Branch("truth_Upsi2muon_pt",  &truth_Upsi2muon_pt);
+   treemc->Branch("truth_Upsi2muon_eta", &truth_Upsi2muon_eta);
+   treemc->Branch("truth_Upsi2muon_phi", &truth_Upsi2muon_phi);
+   treemc->Branch("truth_Upsi2_pt",   &truth_Upsi2_pt);
+   treemc->Branch("truth_Upsi2_eta",  &truth_Upsi2_eta);
+   treemc->Branch("truth_Upsi2_phi",  &truth_Upsi2_phi);
+   treemc->Branch("truth_Upsi2_mass", &truth_Upsi2_mass);
+   treemc->Branch("truth_Upsi2_pdgid", &truth_Upsi2_pdgid);
+   
+   treemc->Branch("truth_Upsi3muon_pt",  &truth_Upsi3muon_pt);
+   treemc->Branch("truth_Upsi3muon_eta", &truth_Upsi3muon_eta);
+   treemc->Branch("truth_Upsi3muon_phi", &truth_Upsi3muon_phi);
+   treemc->Branch("truth_Upsi3_pt",   &truth_Upsi3_pt);
+   treemc->Branch("truth_Upsi3_eta",  &truth_Upsi3_eta);
+   treemc->Branch("truth_Upsi3_phi",  &truth_Upsi3_phi);
+   treemc->Branch("truth_Upsi3_mass", &truth_Upsi3_mass);
+   treemc->Branch("truth_Upsi3_pdgid", &truth_Upsi3_pdgid);
+   
+   treemc->Branch("truth_Chib0_1P_UPSI_muon_pt", &truth_Chib0_1P_UPSI_muon_pt);
+   treemc->Branch("truth_Chib0_1P_UPSI_muon_eta", &truth_Chib0_1P_UPSI_muon_eta);
+   treemc->Branch("truth_Chib0_1P_UPSI_muon_phi", &truth_Chib0_1P_UPSI_muon_phi);
+   
+   treemc->Branch("truth_Chib0_1P_pt", &truth_Chib0_1P_pt);
+   treemc->Branch("truth_Chib0_1P_eta", &truth_Chib0_1P_eta);
+   treemc->Branch("truth_Chib0_1P_phi", &truth_Chib0_1P_phi);
+   treemc->Branch("truth_Chib0_1P_pdgid", &truth_Chib0_1P_pdgid);
+   treemc->Branch("truth_Chib0_1P_mass", &truth_Chib0_1P_mass);
+   
+   treemc->Branch("truth_Chib0_1P_UPSI_pt", &truth_Chib0_1P_UPSI_pt);
+   treemc->Branch("truth_Chib0_1P_UPSI_phi", &truth_Chib0_1P_UPSI_phi);
+   treemc->Branch("truth_Chib0_1P_UPSI_eta", &truth_Chib0_1P_UPSI_eta);
+   treemc->Branch("truth_Chib0_1P_UPSI_pdgid", &truth_Chib0_1P_UPSI_pdgid);
+   treemc->Branch("truth_Chib0_1P_UPSI_mass", &truth_Chib0_1P_UPSI_mass);
+   
+   treemc->Branch("truth_Chib0_1P_photon_pt", &truth_Chib0_1P_photon_pt);
+   treemc->Branch("truth_Chib0_1P_photon_phi", &truth_Chib0_1P_photon_phi);
+   treemc->Branch("truth_Chib0_1P_photon_eta", &truth_Chib0_1P_photon_eta);
+   treemc->Branch("truth_Chib0_1P_photon_pdgid", &truth_Chib0_1P_photon_pdgid);
+   
+   treemc->Branch("truth_Chib1_1P_UPSI_muon_pt", &truth_Chib1_1P_UPSI_muon_pt);
+   treemc->Branch("truth_Chib1_1P_UPSI_muon_eta", &truth_Chib1_1P_UPSI_muon_eta);
+   treemc->Branch("truth_Chib1_1P_UPSI_muon_phi", &truth_Chib1_1P_UPSI_muon_phi);
+   
+   treemc->Branch("truth_Chib1_1P_pt", &truth_Chib1_1P_pt);
+   treemc->Branch("truth_Chib1_1P_eta", &truth_Chib1_1P_eta);
+   treemc->Branch("truth_Chib1_1P_phi", &truth_Chib1_1P_phi);
+   treemc->Branch("truth_Chib1_1P_pdgid", &truth_Chib1_1P_pdgid);
+   treemc->Branch("truth_Chib1_1P_mass", &truth_Chib1_1P_mass);
+   
+   treemc->Branch("truth_Chib1_1P_UPSI_pt", &truth_Chib1_1P_UPSI_pt);
+   treemc->Branch("truth_Chib1_1P_UPSI_eta", &truth_Chib1_1P_UPSI_eta);
+   treemc->Branch("truth_Chib1_1P_UPSI_phi", &truth_Chib1_1P_UPSI_phi);
+   treemc->Branch("truth_Chib1_1P_UPSI_pdgid", &truth_Chib1_1P_UPSI_pdgid);
+   treemc->Branch("truth_Chib1_1P_UPSI_mass", &truth_Chib1_1P_UPSI_mass);
+   
+   treemc->Branch("truth_Chib1_1P_photon_pt", &truth_Chib1_1P_photon_pt);
+   treemc->Branch("truth_Chib1_1P_photon_eta", &truth_Chib1_1P_photon_eta);
+   treemc->Branch("truth_Chib1_1P_photon_phi", &truth_Chib1_1P_photon_phi);
+   treemc->Branch("truth_Chib1_1P_photon_pdgid", &truth_Chib1_1P_photon_pdgid);
+   
+   treemc->Branch("truth_Chib2_1P_UPSI_muon_pt", &truth_Chib2_1P_UPSI_muon_pt);
+   treemc->Branch("truth_Chib2_1P_UPSI_muon_eta", &truth_Chib2_1P_UPSI_muon_eta);
+   treemc->Branch("truth_Chib2_1P_UPSI_muon_phi", &truth_Chib2_1P_UPSI_muon_phi);
+   
+   treemc->Branch("truth_Chib2_1P_pt", &truth_Chib2_1P_pt);
+   treemc->Branch("truth_Chib2_1P_eta", &truth_Chib2_1P_eta);
+   treemc->Branch("truth_Chib2_1P_phi", &truth_Chib2_1P_phi);
+   treemc->Branch("truth_Chib2_1P_pdgid", &truth_Chib2_1P_pdgid);
+   treemc->Branch("truth_Chib2_1P_mass", &truth_Chib2_1P_mass);
+   
+   treemc->Branch("truth_Chib2_1P_UPSI_pt", &truth_Chib2_1P_UPSI_pt);
+   treemc->Branch("truth_Chib2_1P_UPSI_eta", &truth_Chib2_1P_UPSI_eta);
+   treemc->Branch("truth_Chib2_1P_UPSI_phi", &truth_Chib2_1P_UPSI_phi);
+   treemc->Branch("truth_Chib2_1P_UPSI_pdgid", &truth_Chib2_1P_UPSI_pdgid);
+   treemc->Branch("truth_Chib2_1P_UPSI_mass", &truth_Chib2_1P_UPSI_mass);
+   
+   treemc->Branch("truth_Chib2_1P_photon_pt", &truth_Chib2_1P_photon_pt);
+   treemc->Branch("truth_Chib2_1P_photon_eta", &truth_Chib2_1P_photon_eta);
+   treemc->Branch("truth_Chib2_1P_photon_phi", &truth_Chib2_1P_photon_phi);
+   treemc->Branch("truth_Chib2_1P_photon_pdgid", &truth_Chib2_1P_photon_pdgid);
+   
    treemc->Branch("loop_enter_check", &loop_enter_check);
+   treemc->Branch("mc_event_number", &mc_event_number);
+   treemc->Branch("mc_run_number", &mc_run_number);
+   treemc->Branch("mc_lumi_section", &mc_lumi_section);
 
 }
 
@@ -492,6 +633,8 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
    PVz.clear();
 
    run_number.clear(); event_number.clear(); lumi_section.clear(); bunch_crossing.clear(); orbit_number.clear();
+   
+   quadHasHowManyTrigMatches.clear(); // branch passes a basic sanity check when  filled  this way
 
    lepton1_pt                         .clear();  lepton2_pt                         .clear();
    lepton1_eta                        .clear();  lepton2_eta                        .clear();
@@ -566,6 +709,86 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
    truth_Upsimuon_eta.clear();
    truth_Upsimuon_phi.clear();
    truth_Upsi_pt.clear(); truth_Upsi_eta.clear(); truth_Upsi_phi.clear(); truth_Upsi_mass.clear();
+   
+   truth_Upsi2muon_pt.clear(); 
+   truth_Upsi2muon_eta.clear();
+   truth_Upsi2muon_phi.clear();
+   truth_Upsi2_pt.clear(); truth_Upsi2_eta.clear(); truth_Upsi2_phi.clear(); truth_Upsi2_mass.clear();
+   truth_Upsi2_pdgid.clear();
+   
+   truth_Upsi3muon_pt.clear(); 
+   truth_Upsi3muon_eta.clear();
+   truth_Upsi3muon_phi.clear();
+   truth_Upsi3_pt.clear(); truth_Upsi3_eta.clear(); truth_Upsi3_phi.clear(); truth_Upsi3_mass.clear();
+   truth_Upsi3_pdgid.clear();
+   
+   truth_Chib0_1P_UPSI_muon_pt.clear();
+   truth_Chib0_1P_UPSI_muon_eta.clear();
+   truth_Chib0_1P_UPSI_muon_phi.clear();
+   
+   truth_Chib0_1P_pt.clear();
+   truth_Chib0_1P_eta.clear();
+   truth_Chib0_1P_phi.clear();
+   truth_Chib0_1P_pdgid.clear();
+   truth_Chib0_1P_mass.clear();
+   
+   truth_Chib0_1P_UPSI_pt.clear();
+   truth_Chib0_1P_UPSI_phi.clear();
+   truth_Chib0_1P_UPSI_eta.clear();
+   truth_Chib0_1P_UPSI_pdgid.clear();
+   truth_Chib0_1P_UPSI_mass.clear();
+   
+   truth_Chib0_1P_photon_pt.clear();
+   truth_Chib0_1P_photon_phi.clear();
+   truth_Chib0_1P_photon_eta.clear();
+   truth_Chib0_1P_photon_pdgid.clear();
+   
+   truth_Chib1_1P_UPSI_muon_pt.clear();
+   truth_Chib1_1P_UPSI_muon_phi.clear();
+   truth_Chib1_1P_UPSI_muon_eta.clear();
+   
+   truth_Chib1_1P_pt.clear();
+   truth_Chib1_1P_eta.clear();
+   truth_Chib1_1P_phi.clear();
+   truth_Chib1_1P_pdgid.clear();
+   truth_Chib1_1P_mass.clear();
+   
+   truth_Chib1_1P_UPSI_pt.clear();
+   truth_Chib1_1P_UPSI_phi.clear();
+   truth_Chib1_1P_UPSI_eta.clear();
+   truth_Chib1_1P_UPSI_pdgid.clear(); 
+   truth_Chib1_1P_UPSI_mass.clear();  
+   
+   truth_Chib1_1P_photon_pt.clear();
+   truth_Chib1_1P_photon_eta.clear();
+   truth_Chib1_1P_photon_phi.clear();
+   truth_Chib1_1P_photon_pdgid.clear();
+   
+   truth_Chib2_1P_UPSI_muon_pt.clear();
+   truth_Chib2_1P_UPSI_muon_eta.clear();
+   truth_Chib2_1P_UPSI_muon_phi.clear();
+   
+   truth_Chib2_1P_pt.clear();
+   truth_Chib2_1P_eta.clear();
+   truth_Chib2_1P_phi.clear();
+   truth_Chib2_1P_pdgid.clear();
+   truth_Chib2_1P_mass.clear();
+   
+   truth_Chib2_1P_UPSI_pt.clear();
+   truth_Chib2_1P_UPSI_eta.clear();
+   truth_Chib2_1P_UPSI_phi.clear();
+   truth_Chib2_1P_UPSI_pdgid.clear();
+   truth_Chib2_1P_UPSI_mass.clear();
+   
+   truth_Chib2_1P_photon_pt.clear();
+   truth_Chib2_1P_photon_eta.clear();
+   truth_Chib2_1P_photon_phi.clear();
+   truth_Chib2_1P_photon_pdgid.clear();
+    
+   
+   mc_event_number.clear();
+   mc_run_number.clear();
+   mc_lumi_section.clear();
 
    truth_Upsi_pdgid.clear();  
    loop_enter_check.clear();
@@ -747,42 +970,42 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
           for (auto iM4 = iM3+1; iM4 != muons->end(); ++iM4) {
                  
                 double pT_cut = 2.5; // we cut looser here and then harder (pT > 4) in phase 2 code
-                histContainer_["CutFlow"]->AddBinContent(1); //how many candidates we have 
+                histContainer_["CutFlow"]->Fill(1); //how many candidates we have 
                 std::cout << " <<<<<<<<<<<<< ------------------------- entered " << std::endl;
     
                 if (iM1->charge() + iM2->charge() + iM3->charge() + iM4->charge() !=0){
                  
                   std::cout << "FAILED AT CUT 1" << std::endl;
-                  histContainer_["CutFlow"]->AddBinContent(2);
+                  histContainer_["CutFlow"]->Fill(2);
                  continue;
                 }
                 if (fabs(iM1->muonBestTrack()->dz(primary_vertex.position()))>20. || fabs(iM2->muonBestTrack()->dz(primary_vertex.position()))>20.){
-                 histContainer_["CutFlow"]->AddBinContent(3);
+                 histContainer_["CutFlow"]->Fill(3);
                  std::cout << "FAILED AT CUT 2" << std::endl;
                   continue;
                 }
                 if (fabs(iM1->muonBestTrack()->dxy(primary_vertex.position()))>1. || fabs(iM2->muonBestTrack()->dxy(primary_vertex.position()))>1.){
-                  histContainer_["CutFlow"]->AddBinContent(4);
+                  histContainer_["CutFlow"]->Fill(4);
                   std::cout << "FAILED AT CUT 3" <<std::endl;
                   continue;
                 }
                 if (fabs(iM1->eta())>2.5 || fabs(iM2->eta())>2.5){
-                  histContainer_["CutFlow"]->AddBinContent(5);
+                  histContainer_["CutFlow"]->Fill(5);
                   std::cout << "FAILED AT CUT 4" << std::endl;
                   continue;
                 }
                 if (iM1->pt()<pT_cut || iM2->pt()<pT_cut){
-                  histContainer_["CutFlow"]->AddBinContent(6);
+                  histContainer_["CutFlow"]->Fill(6);
                   std::cout << "FAILED AT CUT 5" << std::endl;
                   continue;
                 }
                 if (iM1->isTrackerMuon()==false || iM2->isTrackerMuon()==false){
-                  histContainer_["CutFlow"]->AddBinContent(7);
+                  histContainer_["CutFlow"]->Fill(7);
                   std::cout << "FAILED AT CUT 6" << std::endl;
                   continue;
                 }
   //              if (iM1->isSoftMuon(primary_vertex)==false || iM2->isSoftMuon(primary_vertex)==false){ //QUESTION!: I wouldn't have known isSoftMuon needed to (primary_vertex) argument, is this something you just knew? //Apparently you get compilation errors if you forget it
-  //               histContainer_["CutFlow"]->AddBinContent(8);
+  //               histContainer_["CutFlow"]->Fill(8);
   //               std::cout << "FAILED AT CUT 7"  << std::endl;
    //              continue;
     //            }
@@ -790,34 +1013,34 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
              //     continue;
     
                 if (fabs(iM3->muonBestTrack()->dz(primary_vertex.position()))>20. || fabs(iM4->muonBestTrack()->dz(primary_vertex.position()))>20.){
-                  histContainer_["CutFlow"]->AddBinContent(9);
+                  histContainer_["CutFlow"]->Fill(9);
                   std::cout << "FAILED AT CUT 8" << std::endl;
                   continue;
                 }
                 if (fabs(iM3->muonBestTrack()->dxy(primary_vertex.position()))>1. || fabs(iM4->muonBestTrack()->dxy(primary_vertex.position()))>1.){
-                  histContainer_["CutFlow"]->AddBinContent(10);
+                  histContainer_["CutFlow"]->Fill(10);
                   std::cout << "FAILED AT CUT 9" << std::endl;
                   continue;
                 }
                   
                 if (fabs(iM3->eta())>2.5 || fabs(iM4->eta())>2.5){
-                  histContainer_["CutFlow"]->AddBinContent(11);
+                  histContainer_["CutFlow"]->Fill(11);
                   std::cout << "FAILED AT CUT 10" << std::endl;
                 continue;
                 }
                  
                 if (iM3->pt()<pT_cut || iM4->pt()<pT_cut){
-                  histContainer_["CutFlow"]->AddBinContent(12);
+                  histContainer_["CutFlow"]->Fill(12);
                   std::cout << "FAILED AT CUT 11" << std::endl;
                   continue;
                 }
                 if (iM3->isTrackerMuon()==false || iM4->isTrackerMuon()==false){
-                  histContainer_["CutFlow"]->AddBinContent(13);
+                  histContainer_["CutFlow"]->Fill(13);
                   std::cout << "FAILED AT CUT 12" << std::endl; 
                   continue;
                 }
    //             if (iM3->isSoftMuon(primary_vertex)==false || iM4->isSoftMuon(primary_vertex)==false){
-   //                histContainer_["CutFlow"]->AddBinContent(14);
+   //                histContainer_["CutFlow"]->Fill(14);
     //               std::cout << "FAILED AT CUT 13" << std::endl;
     //               continue;
      //           }
@@ -896,7 +1119,7 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
                 if (!(match_12_34_56 || match_13_24_56 || 
                       match_14_23_56)) {
-                   histContainer_["CutFlow"]->AddBinContent(15);  
+                   histContainer_["CutFlow"]->Fill(15);  
                    std::cout << "FAILED At CUT 14" <<std::endl;
                   continue;
                 }
@@ -908,6 +1131,94 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
                 if (match_13_24_56) {dimuon1mass.push_back(mass_1_3); dimuon2mass.push_back(mass_2_4); dimuon1pt.push_back(pt_1_3); dimuon2pt.push_back(pt_2_4);dimuon1eta.push_back(eta_1_3); dimuon2eta.push_back(eta_2_4); dimuon1phi.push_back(phi_1_3); dimuon2phi.push_back(phi_2_4); }
                                                                                                                                                                                                                                                                                                                     
                 if (match_14_23_56) {dimuon1mass.push_back(mass_1_4); dimuon2mass.push_back(mass_2_3); dimuon1pt.push_back(pt_1_4); dimuon2pt.push_back(pt_2_3);dimuon1eta.push_back(eta_1_4); dimuon2eta.push_back(eta_2_3); dimuon1phi.push_back(phi_1_4); dimuon2phi.push_back(phi_2_3); }
+                  
+                  
+                
+//**** Fresh attempt at trigger matching, using the triggered method of miniaod, see: https://cmsdoxygen.web.cern.ch/cmsdoxygen/CMSSW_11_3_1/doc/html/d6/d13/classpat_1_1Muon.html, thanks to S.L. for finding this
+                bool iM1Triggered = false;
+                bool iM2Triggered = false;
+                bool iM3Triggered = false;
+                bool iM4Triggered = false;
+                //note to self: reusing the same variables this way so that I take advantage of the fact that they have local scope and can just be recycled is not very good practice and I should avoid it from now on
+                //check iM1
+                int iM1TrigMatched = 0;
+                for (unsigned int i = 0, n = triggerlist.size(); i < n; i++){
+                 // std::cout << "triggerlist.at(i)  " << triggerlist.at(i) << std::endl;
+                  std::string tempStr (triggerlist.at(i)); //need to convert string to char as S.L. showed me in email dated 19 Oct. 2021, subject = error when trying to use triggered in a loop over the triggerlist
+                  const char* c = tempStr.c_str(); 
+                  iM1Triggered = iM1->triggered(c);
+                 // std::cout << "tempStr  " << tempStr << std::endl; 
+                 // std::cout << "iM1Triggered is  " << iM1Triggered << std::endl; 
+                  if (iM1Triggered){
+                    iM1TrigMatched += 1;
+                    break;
+                  }
+                }
+                  
+                //check iM2
+                int iM2TrigMatched = 0;
+                for (unsigned int i = 0, n = triggerlist.size(); i < n; i++){
+                  std::string tempStr (triggerlist.at(i));
+                  const char* c = tempStr.c_str(); 
+                  iM2Triggered = iM2->triggered(c);
+                //  std::cout << "tempStr  " << tempStr << std::endl;
+               //   std::cout << "iM2Triggered is  " << iM2Triggered << std::endl; 
+                  if (iM2Triggered){
+                    iM2TrigMatched +=1;
+                    break;
+                  }
+                }
+               
+               //check iM3
+                int iM3TrigMatched = 0;
+                for (unsigned int i=0, n = triggerlist.size(); i < n; i++){
+                  std::string tempStr (triggerlist.at(i));
+                  const char* c = tempStr.c_str();
+                  iM3Triggered = iM3->triggered(c);
+                 // std::cout << "tempStr  " << tempStr << std::endl;
+                //  std::cout << "iM3Triggered is  " << iM3Triggered << std::endl; 
+                  if (iM3Triggered){
+                    iM3TrigMatched += 1;
+                    break;
+                  }
+                }
+                
+                //check iM4
+                
+                int iM4TrigMatched = 0;
+                for (unsigned int i=0, n = triggerlist.size(); i < n; i++){
+                  std::string tempStr (triggerlist.at(i));
+                  const char* c = tempStr.c_str();
+                  iM4Triggered = iM4->triggered(c);
+                 // std::cout << "tempStr  " << tempStr << std::endl;
+                 // std::cout << "iM4Triggered is  " << iM4Triggered << std::endl; 
+                  if (iM4Triggered){
+                    iM4TrigMatched += 1;
+                    break;
+                  }
+                }
+                
+                int totalTrigMatched = iM1TrigMatched + iM2TrigMatched + iM3TrigMatched + iM4TrigMatched;
+                std::cout << "totalTrigMatched  " << totalTrigMatched << std::endl;                
+               
+               
+                
+            //
+                    
+
+                
+                 // iM1Triggered = iM1->triggered("HLT_diMu12_213_v4");
+                 // std::cout << "iM1Triggered " << iM1Triggered << std::endl;
+               
+               
+                 
+                
+                
+ 
+
+
+
+
 
 
 //// ****************
@@ -950,161 +1261,161 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
                 // https://stackoverflow.com/questions/571394/how-to-find-out-if-an-item-is-present-in-a-stdvector
                 //https://www.techiedelight.com/check-vector-contains-given-element-cpp/
                  
-                double trigMatchDRCut = 0.1;
-              //  pat::TriggerObjectStandAlone TO;
-                quadHasHowManyTrigMatches.clear();
-                int trigMatched = 0;
-                std::vector<int> minElementIndexVec;
-                std::cout << "Looking at trigger to reco matching module" << std::endl;
-                for (unsigned int iTO = 0; iTO < triggerObjects->size(); iTO++){
-                //  std::cout << "triggerObjects->size()  " << triggerObjects->size() << std::endl;
-                  pat::TriggerObjectStandAlone TO;
-                  TO = triggerObjects->at(iTO);
-                  TO.unpackPathNames(names);
-                 
-                 //Closely adapted from https://github.com/DryRun/BParkingNANO/blob/master/BParkingNano/plugins/MuonTriggerSelector.cc#L115-L123
-                  TO.unpackFilterLabels(iEvent, *triggerBits);
-               //   if(TMath::Abs(TO.pdgId()) != 13) continue; //make sure you are looking at TO muons!
-                  bool isTriggerMuon = false;
-                  for (unsigned h = 0; h < TO.filterIds().size(); ++h)
-	                if(TO.filterIds()[h] == 83){ //83 = muon
-	                  isTriggerMuon = true; 
-	                  break;
-	                }
-	                
-	              if(!isTriggerMuon) continue;   
-                 
-                  
-                  std::vector<double> tempDRVec;
-                  tempDRVec.clear();
-                  
-                  double PI = 3.14159265358979323846; //https://root.cern.ch/root/html524/TMath.html#TMath:Pi
-                  double TWO_PI = 6.28318530717958647692; //two times the pi as defined above
-                  
-                  double tempDEta1Sq = TMath::Power(TO.eta() - iM1->eta(),2);
-                  double tempDEta2Sq = TMath::Power(TO.eta() - iM2->eta(),2);
-                  double tempDEta3Sq = TMath::Power(TO.eta() - iM3->eta(),2);
-                  double tempDEta4Sq = TMath::Power(TO.eta() - iM4->eta(),2);
-                  
-                  //Thanks to David Yu for reminding me to put this protection in place
-                  double tempDPhi1 = fabs(TO.phi() - iM1->phi());
-                  while( tempDPhi1 > PI ){
-                    tempDPhi1 -= TWO_PI;
-                  }
-                  
-                  double tempDPhi2 = fabs(TO.phi() - iM2->phi());
-                  while( tempDPhi2 > PI ){
-                    tempDPhi2 -= TWO_PI;
-                  }
-                  
-                  double tempDPhi3 = fabs(TO.phi() - iM3->phi());
-                  while( tempDPhi3 > PI ){
-                    tempDPhi3 -= TWO_PI;
-                  }
-                  
-                  double tempDPhi4 = fabs(TO.phi() - iM4->phi());
-                  while( tempDPhi4 > PI ){
-                    tempDPhi4 -= TWO_PI;
-                  }
-                  
-                  
-                  double tempDPhi1Sq = TMath::Power(tempDPhi1,2);
-                  double tempDPhi2Sq = TMath::Power(tempDPhi2,2);
-                  double tempDPhi3Sq = TMath::Power(tempDPhi3,2);
-                  double tempDPhi4Sq = TMath::Power(tempDPhi4,2);
-                  
-                  double tempDR1 = TMath::Sqrt(tempDEta1Sq + tempDPhi1Sq);
-                  double tempDR2 = TMath::Sqrt(tempDEta2Sq + tempDPhi2Sq);
-                  double tempDR3 = TMath::Sqrt(tempDEta3Sq + tempDPhi3Sq);
-                  double tempDR4 = TMath::Sqrt(tempDEta4Sq + tempDPhi4Sq);
-                  
-                  
-                  
-           //       double tempDR1 = TMath::Sqrt(TMath::Power(TO.eta() - iM1->eta(),2) + TMath::Power(TO.phi() - iM1->phi(),2));
-            //      double tempDR2 = TMath::Sqrt(TMath::Power(TO.eta() - iM2->eta(),2) + TMath::Power(TO.phi() - iM2->phi(),2));
-              //    double tempDR3 = TMath::Sqrt(TMath::Power(TO.eta() - iM3->eta(),2) + TMath::Power(TO.phi() - iM3->phi(),2));
-                //  double tempDR4 = TMath::Sqrt(TMath::Power(TO.eta() - iM4->eta(),2) + TMath::Power(TO.phi() - iM4->phi(),2));
-                 // std::cout << "Looking at trigger to reco matching module" << std::endl;
-                  
-                  
-        //          std::cout << iTO << " " << tempDR1 << " " << tempDR2 << " " << tempDR3 << " " << tempDR4 << std::endl;
-        //          std::cout << TO.pt() << " " << iM1->pt() << " " << iM2->pt() <<  " " << iM3->pt() <<  " " << iM4->pt() << std::endl;
-
-                  tempDRVec.push_back(tempDR1); tempDRVec.push_back(tempDR2); tempDRVec.push_back(tempDR3); tempDRVec.push_back(tempDR4);
-            //      std::cout << "tempDRVec.at(0)  " << tempDRVec.at(0) << std::endl; 
-                  int minElementIndex = std::min_element(tempDRVec.begin(),tempDRVec.end()) - tempDRVec.begin();
-           //       std::cout << "minElementIndex  " << minElementIndex << std::endl;
-                  
-              //    std::cout << "Collection  " << TO.collection() << std::endl; //this shows us that the duplicates are likely the same muon that has passed
-              //different triggers. The ones that print out as being the same are listed in each case as being part of a different collection each time
-              //To handle the fact that there are duplicates, when we do the matching, we use the more intensive matching I've done below as opposed to the simpler
-              // matching of  if (tempDR1<0.1 || tempDR2<0.1 || tempDR3<0.1 || tempDR4<0.1)
-                 //               matched++;
-                 //that was initially suggested by S.L.
-              
-                
-                  double minElement = *std::min_element(tempDRVec.begin(), tempDRVec.end());
-          //        std::cout << "minElement  " << minElement << std::endl;
-                  
-                  if (trigMatched == 0){
-                    if (minElement < trigMatchDRCut){
-                      trigMatched++;
-                      minElementIndexVec.push_back(minElementIndex);
-                    //  std::cout << "minElementIndexVec.at(0)  " << minElementIndexVec.at(0) << std::endl;
-                    //  std::cout << "trigMatched is   " << trigMatched << std::endl;
-                    }
-                  
-                  }
-                  
-                //  std::vector<int> testVec;
-//                  testVec.push_back(0);
-//                  std::cout << "testVec.at(0)  " << testVec.at(0) << std::endl; 
-//                  if ( std::count(testVec.begin(), testVec.end(), 1) ) {
-//                     std::cout << "true, 1 is found" << std::endl;
-//                  }
+              //   double trigMatchDRCut = 0.1;
+//               //  pat::TriggerObjectStandAlone TO;
+//                 quadHasHowManyTrigMatches.clear(); //I think is where the bug was, I think this line always needs to be commented out and it should be cleared along with all the other stuff (around line 496 in this case, search "sanity check" to find it)
+//                 int trigMatched = 0;
+//                 std::vector<int> minElementIndexVec;
+//                 std::cout << "Looking at trigger to reco matching module" << std::endl;
+//                 for (unsigned int iTO = 0; iTO < triggerObjects->size(); iTO++){
+//                 //  std::cout << "triggerObjects->size()  " << triggerObjects->size() << std::endl;
+//                   pat::TriggerObjectStandAlone TO;
+//                   TO = triggerObjects->at(iTO);
+//                   TO.unpackPathNames(names);
 //                  
-//                  if ( std::count(testVec.begin(), testVec.end(), 1) == 0 ) {
-//                     std::cout << "false, 1 is NOT found" << std::endl;
-//                  }
-                 
-           //      std::cout << "minElementIndex is:  " <<  minElementIndex << std::endl;
-           //      for (unsigned int i =0; i < minElementIndexVec.size(); i++){
-             //      std::cout << "minElementIndexVec.at(i)  " << minElementIndexVec.at(i) << std::endl; 
-             //    }
-                 
-                 if (trigMatched > 0){
-               //    std::cout << "Entered test area" << std::endl;
-                   if ( std::count(minElementIndexVec.begin(), minElementIndexVec.end(), minElementIndex) == 0 ){
-                 //    std::cout << "Entered here line 1077" << std::endl; 
-                     if (minElement < trigMatchDRCut){
-                       trigMatched++;
-                       minElementIndexVec.push_back(minElementIndex);
-                     }
-                   
-                   }
-                 }
-                  
-                   
-                  
-         //          if (trigMatched > 0){
-//                      std::cout << "Entered test area" << std::endl;
-//                    // if ( (std::find(minElementIndexVec.begin(), minElementIndexVec.end(), minElementIndex) != minElementIndexVec.end() ) == false
-//                     // && minElement < trigMatchDRCut) {
-//                      if (minElement < trigMatchDRCut){
-//                        if (std::find(minElementIndexVec.begin(), minElementIndexVec.end(), minElementIndex) != minElementIndexVec.end() == false){
-//                         std::cout << "Got here line 1052" << std::endl; 
-//                         trigMatched++;
-//                         minElementIndexVec.push_back(minElementIndex);
-//                      }
+//                  //Closely adapted from https://github.com/DryRun/BParkingNANO/blob/master/BParkingNano/plugins/MuonTriggerSelector.cc#L115-L123
+//                   TO.unpackFilterLabels(iEvent, *triggerBits);
+//                //   if(TMath::Abs(TO.pdgId()) != 13) continue; //make sure you are looking at TO muons!
+//                   bool isTriggerMuon = false;
+//                   for (unsigned h = 0; h < TO.filterIds().size(); ++h)
+// 	                if(TO.filterIds()[h] == 83){ //83 = muon
+// 	                  isTriggerMuon = true; 
+// 	                  break;
+// 	                }
+// 	                
+// 	              if(!isTriggerMuon) continue;   
+//                  
+//                   
+//                   std::vector<double> tempDRVec;
+//                   tempDRVec.clear();
+//                   
+//                   double PI = 3.14159265358979323846; //https://root.cern.ch/root/html524/TMath.html#TMath:Pi
+//                   double TWO_PI = 6.28318530717958647692; //two times the pi as defined above
+//                   
+//                   double tempDEta1Sq = TMath::Power(TO.eta() - iM1->eta(),2);
+//                   double tempDEta2Sq = TMath::Power(TO.eta() - iM2->eta(),2);
+//                   double tempDEta3Sq = TMath::Power(TO.eta() - iM3->eta(),2);
+//                   double tempDEta4Sq = TMath::Power(TO.eta() - iM4->eta(),2);
+//                   
+//                   //Thanks to David Yu for reminding me to put this protection in place
+//                   double tempDPhi1 = fabs(TO.phi() - iM1->phi());
+//                   while( tempDPhi1 > PI ){
+//                     tempDPhi1 -= TWO_PI;
+//                   }
+//                   
+//                   double tempDPhi2 = fabs(TO.phi() - iM2->phi());
+//                   while( tempDPhi2 > PI ){
+//                     tempDPhi2 -= TWO_PI;
+//                   }
+//                   
+//                   double tempDPhi3 = fabs(TO.phi() - iM3->phi());
+//                   while( tempDPhi3 > PI ){
+//                     tempDPhi3 -= TWO_PI;
+//                   }
+//                   
+//                   double tempDPhi4 = fabs(TO.phi() - iM4->phi());
+//                   while( tempDPhi4 > PI ){
+//                     tempDPhi4 -= TWO_PI;
+//                   }
+//                   
+//                   
+//                   double tempDPhi1Sq = TMath::Power(tempDPhi1,2);
+//                   double tempDPhi2Sq = TMath::Power(tempDPhi2,2);
+//                   double tempDPhi3Sq = TMath::Power(tempDPhi3,2);
+//                   double tempDPhi4Sq = TMath::Power(tempDPhi4,2);
+//                   
+//                   double tempDR1 = TMath::Sqrt(tempDEta1Sq + tempDPhi1Sq);
+//                   double tempDR2 = TMath::Sqrt(tempDEta2Sq + tempDPhi2Sq);
+//                   double tempDR3 = TMath::Sqrt(tempDEta3Sq + tempDPhi3Sq);
+//                   double tempDR4 = TMath::Sqrt(tempDEta4Sq + tempDPhi4Sq);
+//                   
+//                   
+//                   
+//            //       double tempDR1 = TMath::Sqrt(TMath::Power(TO.eta() - iM1->eta(),2) + TMath::Power(TO.phi() - iM1->phi(),2));
+//             //      double tempDR2 = TMath::Sqrt(TMath::Power(TO.eta() - iM2->eta(),2) + TMath::Power(TO.phi() - iM2->phi(),2));
+//               //    double tempDR3 = TMath::Sqrt(TMath::Power(TO.eta() - iM3->eta(),2) + TMath::Power(TO.phi() - iM3->phi(),2));
+//                 //  double tempDR4 = TMath::Sqrt(TMath::Power(TO.eta() - iM4->eta(),2) + TMath::Power(TO.phi() - iM4->phi(),2));
+//                  // std::cout << "Looking at trigger to reco matching module" << std::endl;
+//                   
+//                   
+//         //          std::cout << iTO << " " << tempDR1 << " " << tempDR2 << " " << tempDR3 << " " << tempDR4 << std::endl;
+//         //          std::cout << TO.pt() << " " << iM1->pt() << " " << iM2->pt() <<  " " << iM3->pt() <<  " " << iM4->pt() << std::endl;
+// 
+//                   tempDRVec.push_back(tempDR1); tempDRVec.push_back(tempDR2); tempDRVec.push_back(tempDR3); tempDRVec.push_back(tempDR4);
+//             //      std::cout << "tempDRVec.at(0)  " << tempDRVec.at(0) << std::endl; 
+//                   int minElementIndex = std::min_element(tempDRVec.begin(),tempDRVec.end()) - tempDRVec.begin();
+//            //       std::cout << "minElementIndex  " << minElementIndex << std::endl;
+//                   
+//               //    std::cout << "Collection  " << TO.collection() << std::endl; //this shows us that the duplicates are likely the same muon that has passed
+//               //different triggers. The ones that print out as being the same are listed in each case as being part of a different collection each time
+//               //To handle the fact that there are duplicates, when we do the matching, we use the more intensive matching I've done below as opposed to the simpler
+//               // matching of  if (tempDR1<0.1 || tempDR2<0.1 || tempDR3<0.1 || tempDR4<0.1)
+//                  //               matched++;
+//                  //that was initially suggested by S.L.
+//               
+//                 
+//                   double minElement = *std::min_element(tempDRVec.begin(), tempDRVec.end());
+//           //        std::cout << "minElement  " << minElement << std::endl;
+//                   
+//                   if (trigMatched == 0){
+//                     if (minElement < trigMatchDRCut){
+//                       trigMatched++;
+//                       minElementIndexVec.push_back(minElementIndex);
+//                     //  std::cout << "minElementIndexVec.at(0)  " << minElementIndexVec.at(0) << std::endl;
+//                     //  std::cout << "trigMatched is   " << trigMatched << std::endl;
 //                     }
 //                   
 //                   }
-                  
-            
-               // quadHasHowManyTrigMatches.push_back(trigMatched);
-                }
-                
-                quadHasHowManyTrigMatches.push_back(trigMatched); //test comment //test comment 2
+//                   
+//                 //  std::vector<int> testVec;
+// //                  testVec.push_back(0);
+// //                  std::cout << "testVec.at(0)  " << testVec.at(0) << std::endl; 
+// //                  if ( std::count(testVec.begin(), testVec.end(), 1) ) {
+// //                     std::cout << "true, 1 is found" << std::endl;
+// //                  }
+// //                  
+// //                  if ( std::count(testVec.begin(), testVec.end(), 1) == 0 ) {
+// //                     std::cout << "false, 1 is NOT found" << std::endl;
+// //                  }
+//                  
+//            //      std::cout << "minElementIndex is:  " <<  minElementIndex << std::endl;
+//            //      for (unsigned int i =0; i < minElementIndexVec.size(); i++){
+//              //      std::cout << "minElementIndexVec.at(i)  " << minElementIndexVec.at(i) << std::endl; 
+//              //    }
+//                  
+//                  if (trigMatched > 0){
+//                //    std::cout << "Entered test area" << std::endl;
+//                    if ( std::count(minElementIndexVec.begin(), minElementIndexVec.end(), minElementIndex) == 0 ){
+//                  //    std::cout << "Entered here line 1077" << std::endl; 
+//                      if (minElement < trigMatchDRCut){
+//                        trigMatched++;
+//                        minElementIndexVec.push_back(minElementIndex);
+//                      }
+//                    
+//                    }
+//                  }
+//                   
+//                    
+//                   
+//          //          if (trigMatched > 0){
+// //                      std::cout << "Entered test area" << std::endl;
+// //                    // if ( (std::find(minElementIndexVec.begin(), minElementIndexVec.end(), minElementIndex) != minElementIndexVec.end() ) == false
+// //                     // && minElement < trigMatchDRCut) {
+// //                      if (minElement < trigMatchDRCut){
+// //                        if (std::find(minElementIndexVec.begin(), minElementIndexVec.end(), minElementIndex) != minElementIndexVec.end() == false){
+// //                         std::cout << "Got here line 1052" << std::endl; 
+// //                         trigMatched++;
+// //                         minElementIndexVec.push_back(minElementIndex);
+// //                      }
+// //                     }
+// //                   
+// //                   }
+//                   
+//             
+//                // quadHasHowManyTrigMatches.push_back(trigMatched);
+//                 }
+//                 
+//                 quadHasHowManyTrigMatches.push_back(trigMatched); //test comment //test comment 2
 
 // *********     
 // VERTEXING 
@@ -1327,7 +1638,10 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
               //  float rho=*rhoH;
              // rho.clear();
                 rho.push_back(*rhoH);
-    
+                
+                //making sure this is right...
+                quadHasHowManyTrigMatches.push_back(totalTrigMatched);
+                
                 lepton1_pt                         .push_back(iM1->pt());  
                 lepton1_eta                        .push_back(iM1->eta());
                 lepton1_phi                        .push_back(iM1->phi());
@@ -1466,6 +1780,10 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
    
     
     loop_enter_check.push_back(1);
+    mc_event_number.push_back(iEvent.id().event());
+    mc_run_number.push_back(iEvent.run());
+    mc_lumi_section.push_back(iEvent.luminosityBlock());
+        
     edm::Handle<reco::GenParticleCollection> mc_particles;
     iEvent.getByToken(genParticlesToken_, mc_particles);
 
@@ -1477,6 +1795,15 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     int UPSI_3S = 200553;
     int Z_to_fill_count = 0;
     int Upsi_to_fill_count =  0;
+    
+    
+    //ChibJ_1P states
+    int Chib0_1P = 10551;
+    int Chib1_1P = 20553;
+    int Chib2_1P = 555;
+    
+    //Photon
+    int photon = 22;
 
     std::vector<double> upsi_pt_found;
     upsi_pt_found.clear();
@@ -1487,13 +1814,47 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     //QUESTION!: I probably just missed something, but is there a reason you don't fill the upsi_pt_found until line 953 (similar question for Z_pt_found). I guess I'm not sure what this loop 
     //is doing, you said it was a protection against the pythia weirdos (when pythia has a lot of things with similar pT/eta) but I'm not sure I'm understanding what's going on here
     //wouldn't it make more sense to test the truth pT of the mc particle versus the reco pT of the mc particle?
-    bool registered_upsi = false;
-    bool registered_Z = false;
+ //   bool registered_upsi = false;
+ //   bool registered_Z = false;
 
     for(unsigned int i = 0; i < mc_particles->size(); ++i) {
       const reco::GenParticle* gen_particle = &mc_particles->at(i);
 //      if (gen_particle->pdgId() != UPSI && gen_particle->pdgId() != MUON && gen_particle->pdgId() != Z)
   //       std::cout << "NOT AN UPSI, MU, or Z" << std::endl;
+  
+         // get at final state muons that come from upsi1, upsi2, or upsi3 //verified that the statuts = 1 requirement is too harsh
+         //also verified that when we relax it, we get the same answer working backwards from the muons 
+         // as we do working downwards from the upsi
+         
+         
+     //     if (TMath::Abs(gen_particle->pdgId()) == MUON){// && gen_particle->status() == 1){
+//           // std::cout << "SECOND PLACEHOLDER" << std::endl;
+//            bool hasUpsi1Ancestor = false;
+//            for (size_t k = 0; k < gen_particle->numberOfMothers(); k++){
+//            //  std::cout << "THIRD PLACE HOLDER" << std::endl;
+//              if (gen_particle->mother(k)->pdgId() == UPSI){
+//                hasUpsi1Ancestor = true;
+//                std::cout << "hasUpsi1Ancestor  " << hasUpsi1Ancestor << std::endl;
+//                std::cout << "gen_particle->mother(k)->pdgId()  " << gen_particle->mother(k)->pdgId() <<std::endl;
+//                std::cout << "gen_particle->mother(k)->pt()     " << gen_particle->mother(k)->pt() << std::endl;
+//                std::cout << "gen_particle->mother(k)->eta()    " << gen_particle->mother(k)->eta() << std::endl;
+//                std::cout << "gen_particle->mother(k)->phi()    " << gen_particle->mother(k)->phi() << std::endl;
+//                std::cout << "gen_particle->mother(k)->mass()   " << gen_particle->mother(k)->mass() << std::endl;
+//                
+//                std::cout << "gen_particle->pdgId()            " << gen_particle->pdgId() << std::endl;
+//                std::cout << "gen_particle->pt()               " << gen_particle->pt() << std::endl;
+//                std::cout << "gen_particle->eta()              " << gen_particle->eta() << std::endl;
+//                std::cout << "gen_particle->phi()              " << gen_particle->phi() << std::endl;
+//                std::cout << "gen_particle->mass()             " << gen_particle->mass() << std::endl;
+//              
+//              
+//              }
+//            }
+//          }
+
+         
+         
+         
          if (gen_particle->pdgId() == UPSI_2S ||gen_particle->pdgId() == UPSI_3S){
             std::cout << "FOUND UPSI_2S or UPSI_3S" << std::endl;
             std::cout << gen_particle->pdgId() << std::endl;
@@ -1508,12 +1869,252 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
             std::cout << "gen_particle->pdgId() " << gen_particle->pdgId() << std::endl;
             std::cout << "gen_particle->status() " << gen_particle->status() << std::endl;
             
+            int upsi_mu_daughter_counter = 0;
             for (size_t j = 0; j < gen_particle->numberOfDaughters(); ++j) {
-              if (TMath::Abs(gen_particle->daughter(j)->pdgId()) == MUON  ){
-                std::cout << "PLACEHOLDER!"<< std::endl;
+              if (TMath::Abs(gen_particle->daughter(j)->pdgId()) == MUON){ //&& gen_particle->daughter(j)->status() ==1  ){
+//                std::cout << "Muon info coming down from the top!"<< std::endl;
+                upsi_mu_daughter_counter +=1;
+                std::cout << gen_particle->daughter(j)->status() << std::endl;
+                truth_Upsimuon_pt .push_back(gen_particle->daughter(j)->pt());
+                truth_Upsimuon_eta.push_back(gen_particle->daughter(j)->eta());
+                truth_Upsimuon_phi.push_back(gen_particle->daughter(j)->phi());
+                
+               //  std::cout << "gen_particle->daughter(j)->pt() " << gen_particle->daughter(j)->pt() << std::endl;
+//                 std::cout << "gen_particle->daughter(j)->eta() "<< gen_particle->daughter(j)->eta() << std::endl;
+//                 std::cout << "gen_particle->daughter(j)->phi() "<< gen_particle->daughter(j)->phi() << std::endl;
+//                 std::cout << "gen_particle->daughter(j)->mass() "<< gen_particle->daughter(j)->mass() << std::endl;
+//                 std::cout << "gen_particle->daughter(j)->pdgId() " << gen_particle->daughter(j)->pdgId() << std::endl;
+                
+                if (upsi_mu_daughter_counter == 1){
+                  std::cout << "Filling upsi 1 truth info" << std::endl; 
+                  truth_Upsi_pt  .push_back(gen_particle->pt());
+                  truth_Upsi_eta .push_back(gen_particle->eta());
+                  truth_Upsi_phi .push_back(gen_particle->phi());
+                  truth_Upsi_mass.push_back(gen_particle->mass());
+                  truth_Upsi_pdgid.push_back(gen_particle->pdgId());
+                  
+                //   std::cout << "gen_particle->pt()  "<< gen_particle->pt() << std::endl;
+//                   std::cout << "gen_particle->eta()  "<< gen_particle->eta() << std::endl;
+//                   std::cout << "gen_particle->phi()  "<< gen_particle->phi() << std::endl;
+//                   std::cout << "gen_particle->mass()  "<< gen_particle->mass() << std::endl;
+//                   std::cout << "gen_particle->pdgId() " << gen_particle->pdgId() << std::endl; 
+                  
+                  
+                
+                
+                }
              }
          }
         }
+        
+        
+        //ChibJ_1P states that decay with a soft photon to upsi 1's
+        
+         //Chib0_1P state
+         if (gen_particle->pdgId() == Chib0_1P){
+           std::cout << "Found Chib0_1P" << std::endl;
+           for (size_t j = 0; j < gen_particle->numberOfDaughters(); ++j) {
+             if (gen_particle->daughter(j)->pdgId() == UPSI){
+                std::cout << "Found upsi 1 from Chib0_1P" << std::endl;
+                int Chib0_1P_granddaughter_counter = 0;
+                for (size_t k =0; k < gen_particle->daughter(j)->numberOfDaughters(); k++){
+                 // std::cout << "ANOTHER PLACEHOLDER" << std::endl;
+                   
+                  if (TMath::Abs(gen_particle->daughter(j)->daughter(k)->pdgId()) == MUON){
+                    Chib0_1P_granddaughter_counter++;
+                    std::cout << "FILL muons that are granddaughters of Chib0_1P here" << std::endl;
+                    truth_Chib0_1P_UPSI_muon_pt.push_back(gen_particle->daughter(j)->daughter(k)->pt());
+                    truth_Chib0_1P_UPSI_muon_eta.push_back(gen_particle->daughter(j)->daughter(k)->eta());
+                    truth_Chib0_1P_UPSI_muon_phi.push_back(gen_particle->daughter(j)->daughter(k)->phi());
+                    
+                    if (Chib0_1P_granddaughter_counter == 1){
+                       std::cout << "Fill Chib0_1P, Upsi info here" << std::endl; 
+                       truth_Chib0_1P_pt.push_back(gen_particle->pt());
+                       truth_Chib0_1P_eta.push_back(gen_particle->eta());
+                       truth_Chib0_1P_phi.push_back(gen_particle->phi());
+                       truth_Chib0_1P_pdgid.push_back(gen_particle->pdgId());
+                       truth_Chib0_1P_mass.push_back(gen_particle->mass());
+                       
+                       truth_Chib0_1P_UPSI_pt.push_back(gen_particle->daughter(j)->pt());
+                       truth_Chib0_1P_UPSI_eta.push_back(gen_particle->daughter(j)->eta());
+                       truth_Chib0_1P_UPSI_phi.push_back(gen_particle->daughter(j)->phi());
+                       truth_Chib0_1P_UPSI_pdgid.push_back(gen_particle->daughter(j)->pdgId());
+                       truth_Chib0_1P_UPSI_mass.push_back(gen_particle->daughter(j)->mass());
+                    }
+                  
+                  }
+                }
+             }
+             if (gen_particle->daughter(j)->pdgId() == photon){
+                std::cout << "Found photon from Chib0_1P" << std::endl; 
+                truth_Chib0_1P_photon_pt.push_back(gen_particle->daughter(j)->pt());
+                truth_Chib0_1P_photon_eta.push_back(gen_particle->daughter(j)->eta());
+                truth_Chib0_1P_photon_phi.push_back(gen_particle->daughter(j)->phi());
+                truth_Chib0_1P_photon_pdgid.push_back(gen_particle->daughter(j)->pdgId());
+             }
+           
+           }
+         
+         }
+         
+         //Chib1_1P state
+         if (gen_particle->pdgId() == Chib1_1P){
+           std::cout << "Found Chib1_1P" << std::endl;
+           for (size_t j = 0; j < gen_particle->numberOfDaughters(); ++j) {
+             if (gen_particle->daughter(j)->pdgId() == UPSI){
+                std::cout << "Found upsi 1 from Chib1_1P" << std::endl;
+                int Chib1_1P_granddaughter_counter = 0;
+                for (size_t k =0; k < gen_particle->daughter(j)->numberOfDaughters(); k++){
+                 // std::cout << "ANOTHER PLACEHOLDER" << std::endl;
+                   
+                  if (TMath::Abs(gen_particle->daughter(j)->daughter(k)->pdgId()) == MUON){
+                    Chib1_1P_granddaughter_counter++;
+                    std::cout << "FILL muons that are granddaughters of Chib1_1P here" << std::endl;
+                    truth_Chib1_1P_UPSI_muon_pt.push_back(gen_particle->daughter(j)->daughter(k)->pt());
+                    truth_Chib1_1P_UPSI_muon_eta.push_back(gen_particle->daughter(j)->daughter(k)->eta());
+                    truth_Chib1_1P_UPSI_muon_phi.push_back(gen_particle->daughter(j)->daughter(k)->phi());
+                    
+                    if (Chib1_1P_granddaughter_counter == 1){
+                       std::cout << "Fill Chib1_1P, Upsi info here" << std::endl; 
+                       truth_Chib1_1P_pt.push_back(gen_particle->pt());
+                       truth_Chib1_1P_eta.push_back(gen_particle->eta());
+                       truth_Chib1_1P_phi.push_back(gen_particle->phi());
+                       truth_Chib1_1P_pdgid.push_back(gen_particle->pdgId());
+                       truth_Chib1_1P_mass.push_back(gen_particle->mass());
+                       
+                       truth_Chib1_1P_UPSI_pt.push_back(gen_particle->daughter(j)->pt());
+                       truth_Chib1_1P_UPSI_eta.push_back(gen_particle->daughter(j)->eta());
+                       truth_Chib1_1P_UPSI_phi.push_back(gen_particle->daughter(j)->phi());
+                       truth_Chib1_1P_UPSI_pdgid.push_back(gen_particle->daughter(j)->pdgId());
+                       truth_Chib1_1P_UPSI_mass.push_back(gen_particle->daughter(j)->mass());
+                    }
+                  
+                  }
+                }
+             }
+             if (gen_particle->daughter(j)->pdgId() == photon){
+                std::cout << "Found photon from Chib1_1P" << std::endl; 
+                truth_Chib1_1P_photon_pt.push_back(gen_particle->daughter(j)->pt());
+                truth_Chib1_1P_photon_eta.push_back(gen_particle->daughter(j)->eta());
+                truth_Chib1_1P_photon_phi.push_back(gen_particle->daughter(j)->phi());
+                truth_Chib1_1P_photon_pdgid.push_back(gen_particle->daughter(j)->pdgId());
+             }
+           
+           }
+         
+         }
+         
+         //Chib2_1P state
+         if (gen_particle->pdgId() == Chib2_1P){
+           std::cout << "Found Chib2_1P" << std::endl;
+           for (size_t j = 0; j < gen_particle->numberOfDaughters(); ++j) {
+             if (gen_particle->daughter(j)->pdgId() == UPSI){
+                std::cout << "Found upsi 1 from Chib2_1P" << std::endl;
+                int Chib2_1P_granddaughter_counter = 0;
+                for (size_t k =0; k < gen_particle->daughter(j)->numberOfDaughters(); k++){
+                 // std::cout << "ANOTHER PLACEHOLDER" << std::endl;
+                
+                 //Comments to  better understand what is happening in this sample
+                 if (TMath::Abs(gen_particle->daughter(j)->daughter(k)->pdgId()) != MUON){
+                    std::cout << "Upsi 1 daughter is not a muon" << std::endl;
+                    std::cout << TMath::Abs(gen_particle->daughter(j)->daughter(k)->pdgId()) << std::endl;
+                 }
+                 
+                 
+                  if (TMath::Abs(gen_particle->daughter(j)->daughter(k)->pdgId()) == MUON){
+                    Chib2_1P_granddaughter_counter++;
+                    std::cout << "FILL muons that are granddaughters of Chib2_1P here" << std::endl;
+                    truth_Chib2_1P_UPSI_muon_pt.push_back(gen_particle->daughter(j)->daughter(k)->pt());
+                    truth_Chib2_1P_UPSI_muon_eta.push_back(gen_particle->daughter(j)->daughter(k)->eta());
+                    truth_Chib2_1P_UPSI_muon_phi.push_back(gen_particle->daughter(j)->daughter(k)->phi());
+                    
+                    if (Chib2_1P_granddaughter_counter == 1){
+                       std::cout << "Fill Chib2_1P, Upsi info here" << std::endl; 
+                       truth_Chib2_1P_pt.push_back(gen_particle->pt());
+                       truth_Chib2_1P_eta.push_back(gen_particle->eta());
+                       truth_Chib2_1P_phi.push_back(gen_particle->phi());
+                       truth_Chib2_1P_pdgid.push_back(gen_particle->pdgId());
+                       truth_Chib2_1P_mass.push_back(gen_particle->mass());
+                       
+                       truth_Chib2_1P_UPSI_pt.push_back(gen_particle->daughter(j)->pt());
+                       truth_Chib2_1P_UPSI_eta.push_back(gen_particle->daughter(j)->eta());
+                       truth_Chib2_1P_UPSI_phi.push_back(gen_particle->daughter(j)->phi());
+                       truth_Chib2_1P_UPSI_pdgid.push_back(gen_particle->daughter(j)->pdgId());
+                       truth_Chib2_1P_UPSI_mass.push_back(gen_particle->daughter(j)->mass());
+                    }
+                  
+                  }
+                }
+             }
+             if (gen_particle->daughter(j)->pdgId() == photon){
+                std::cout << "Found photon from Chib2_1P" << std::endl; 
+                truth_Chib2_1P_photon_pt.push_back(gen_particle->daughter(j)->pt());
+                truth_Chib2_1P_photon_eta.push_back(gen_particle->daughter(j)->eta());
+                truth_Chib2_1P_photon_phi.push_back(gen_particle->daughter(j)->phi());
+                truth_Chib2_1P_photon_pdgid.push_back(gen_particle->daughter(j)->pdgId());
+             }
+           
+           }
+         
+         }
+         
+         if (gen_particle->pdgId() == UPSI_2S){
+            std::cout << "gen_particle->pdgId() " << gen_particle->pdgId() << std::endl;
+            std::cout << "gen_particle->status() " << gen_particle->status() << std::endl;
+            
+            int upsi2_mu_daughter_counter = 0;
+            for (size_t j = 0; j < gen_particle->numberOfDaughters(); ++j) {
+              if (TMath::Abs(gen_particle->daughter(j)->pdgId()) == MUON){ //&& gen_particle->daughter(j)->status() ==1  ){
+              //  std::cout << "PLACEHOLDER UPSI 2!"<< std::endl;
+                upsi2_mu_daughter_counter +=1;
+                std::cout << gen_particle->daughter(j)->status() << std::endl;
+                truth_Upsi2muon_pt .push_back(gen_particle->daughter(j)->pt());
+                truth_Upsi2muon_eta.push_back(gen_particle->daughter(j)->eta());
+                truth_Upsi2muon_phi.push_back(gen_particle->daughter(j)->phi());
+                
+                if (upsi2_mu_daughter_counter == 1){
+                  std::cout << "Filling upsi 2 truth info" << std::endl; 
+                  truth_Upsi2_pt  .push_back(gen_particle->pt());
+                  truth_Upsi2_eta .push_back(gen_particle->eta());
+                  truth_Upsi2_phi .push_back(gen_particle->phi());
+                  truth_Upsi2_mass.push_back(gen_particle->mass());
+                  truth_Upsi2_pdgid.push_back(gen_particle->pdgId());
+                
+                
+                }
+             }
+         }
+        }
+        
+        
+         if (gen_particle->pdgId() == UPSI_3S){
+            std::cout << "gen_particle->pdgId() " << gen_particle->pdgId() << std::endl;
+            std::cout << "gen_particle->status() " << gen_particle->status() << std::endl;
+            
+            int upsi3_mu_daughter_counter = 0;
+            for (size_t j = 0; j < gen_particle->numberOfDaughters(); ++j) {
+              if (TMath::Abs(gen_particle->daughter(j)->pdgId()) == MUON){ //&& gen_particle->daughter(j)->status() ==1  ){
+              //  std::cout << "PLACEHOLDER UPSI 3!"<< std::endl;
+                upsi3_mu_daughter_counter +=1;
+                std::cout << gen_particle->daughter(j)->status() << std::endl;
+                truth_Upsi3muon_pt .push_back(gen_particle->daughter(j)->pt());
+                truth_Upsi3muon_eta.push_back(gen_particle->daughter(j)->eta());
+                truth_Upsi3muon_phi.push_back(gen_particle->daughter(j)->phi());
+                
+                if (upsi3_mu_daughter_counter == 1){
+                  std::cout << "Filling upsi 3 truth info" << std::endl; 
+                  truth_Upsi3_pt  .push_back(gen_particle->pt());
+                  truth_Upsi3_eta .push_back(gen_particle->eta());
+                  truth_Upsi3_phi .push_back(gen_particle->phi());
+                  truth_Upsi3_mass.push_back(gen_particle->mass());
+                  truth_Upsi3_pdgid.push_back(gen_particle->pdgId());
+                
+                
+                }
+             }
+         }
+        }
+        
   //    registered_upsi = false;
 //      POODLE=false;
  //      if (gen_particle->pdgId() == UPSI) { 
@@ -1545,31 +2146,32 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 //       }
      
      
-      registered_Z = false;
+   //   registered_Z = false;
       if (gen_particle->pdgId() == Z) {
-        std::cout << gen_particle->pt() << std::endl;
-        std::cout<< gen_particle->numberOfDaughters() << std::endl;
-        for (int iZ = 0; iZ < (int)Z_pt_found.size(); iZ++) {
-          if (TMath::Abs( gen_particle->pt() - Z_pt_found.at(iZ) ) < .05){
-  //          POODLE = true;
-            std::cout << "POODLE" << std::endl;
-          }
-          if (TMath::Abs( gen_particle->pt() - Z_pt_found.at(iZ) ) < 0.0000001) //tune this number! 0.000001 gives all events back
-            
-            registered_Z = true;
- //           registered_Z_count+=1;
-          
-        //   if (!registered_Z){
-//             truth_Z_pt  .push_back(gen_particle->pt());
-//             truth_Z_eta .push_back(gen_particle->eta());
-//             truth_Z_phi .push_back(gen_particle->phi());
-//             truth_Z_mass.push_back(gen_particle->mass());
-//             truth_Z_pdgid.push_back(gen_particle->pdgId());
-//           
+       
+       //  std::cout << gen_particle->pt() << std::endl;
+//         std::cout<< gen_particle->numberOfDaughters() << std::endl;
+//         for (int iZ = 0; iZ < (int)Z_pt_found.size(); iZ++) {
+//           if (TMath::Abs( gen_particle->pt() - Z_pt_found.at(iZ) ) < .05){
+//   //          POODLE = true;
+//             std::cout << "POODLE" << std::endl;
 //           }
-
-
-         }
+//           if (TMath::Abs( gen_particle->pt() - Z_pt_found.at(iZ) ) < 0.0000001) //tune this number! 0.000001 gives all events back
+//             
+//             registered_Z = true;
+//  //           registered_Z_count+=1;
+//           
+//         //   if (!registered_Z){
+// //             truth_Z_pt  .push_back(gen_particle->pt());
+// //             truth_Z_eta .push_back(gen_particle->eta());
+// //             truth_Z_phi .push_back(gen_particle->phi());
+// //             truth_Z_mass.push_back(gen_particle->mass());
+// //             truth_Z_pdgid.push_back(gen_particle->pdgId());
+// //           
+// //           }
+// 
+// 
+//          }
      //    if (!registered_Z) {
 //           truth_Z_pt  .push_back(gen_particle->pt());
 //           truth_Z_eta .push_back(gen_particle->eta());
@@ -1578,31 +2180,35 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 //            truth_Z_pdgid.push_back(gen_particle->pdgId());
 //         
 //         }
-        
+        int Z_mu_daughter_counter = 0;
         for (size_t j = 0; j < gen_particle->numberOfDaughters(); ++j) {
-          if (TMath::Abs(gen_particle->daughter(j)->pdgId()) == MUON && !registered_Z) {
+          if (TMath::Abs(gen_particle->daughter(j)->pdgId()) == MUON ) {
+            Z_mu_daughter_counter++;
+            std::cout << "PLACEHOLDER 2" << std::endl; 
+            std::cout << gen_particle->daughter(j)->status() << std::endl;
             truth_Zmuon_pt .push_back(gen_particle->daughter(j)->pt());
             truth_Zmuon_eta.push_back(gen_particle->daughter(j)->eta());
             truth_Zmuon_phi.push_back(gen_particle->daughter(j)->phi());
-             Z_to_fill_count+=1;
+            Z_to_fill_count+=1;
             
-            //WARNING THE Z'S ARE NOW BEING FILLED FOR EVERY MUON, NEED TO CLEAN THIS UP WITH A MUON COUNTER TO DO
-            truth_Z_pt  .push_back(gen_particle->pt());
-           truth_Z_eta .push_back(gen_particle->eta());
-           truth_Z_phi .push_back(gen_particle->phi());
-           truth_Z_mass.push_back(gen_particle->mass());
-           truth_Z_pdgid.push_back(gen_particle->pdgId());
-           
+           if (Z_mu_daughter_counter == 1){
+             truth_Z_pt  .push_back(gen_particle->pt());
+             truth_Z_eta .push_back(gen_particle->eta());
+             truth_Z_phi .push_back(gen_particle->phi());
+             truth_Z_mass.push_back(gen_particle->mass());
+             truth_Z_pdgid.push_back(gen_particle->pdgId());
+           }
           }
         }
-        Z_pt_found  .push_back(gen_particle->pt());
+ //       Z_pt_found  .push_back(gen_particle->pt());
       }
-
+      
+      
 
     }
     treemc->Fill();
  //   std::cout << "Z_to_fill_count is:" << Z_to_fill_count << std::endl;
-    std::cout << "Upsi_to_fill_count is:" << Upsi_to_fill_count << std::endl;
+ //   std::cout << "Upsi_to_fill_count is:" << Upsi_to_fill_count << std::endl;
    } // end of mc
 
 }
