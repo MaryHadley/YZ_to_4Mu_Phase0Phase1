@@ -6,3 +6,4 @@ cd < workArea >
 cmsrel CMSSW_10_6_27 #Needed for UL  
 cd CMSSW_10_6_27/src  
 cmsenv 
+git clone  
