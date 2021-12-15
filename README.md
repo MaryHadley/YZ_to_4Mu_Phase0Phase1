@@ -11,6 +11,6 @@ cd YZ_to_4Mu_Phase0Phase1
 mv * ..  
 cd ..  
 rm -rf YZ_to_4Mu_Phase0Phase1  
-cmsenv
+cmsenv  
 scram b -j8 USER_CXXFLAGS="-g"  
 
