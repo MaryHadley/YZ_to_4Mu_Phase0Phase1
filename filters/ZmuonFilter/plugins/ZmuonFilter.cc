@@ -117,7 +117,7 @@ invMass4MuCut_low = iConfig.getParameter<double>("invMass4MuCut_low");
 
 edm::Service<TFileService> fs; //creating a TFileService instance
 
-phase0_histContainer_ ["phase0_CutFlow"]   = fs->make<TH1F>("phase0_CutFlow",  ";phase0_CutFlow;Z+Upsi Candidate",3,0,3); //creating phase0_CutFlow histo in the phase0_histContainer_
+phase0_histContainer_ ["phase0_CutFlow"]   = fs->make<TH1F>("phase0_CutFlow",  ";phase0_CutFlow;Z+Upsi Candidate",4,0,4); //creating phase0_CutFlow histo in the phase0_histContainer_
 for(std::unordered_map<std::string,TH1*>::iterator it=phase0_histContainer_.begin();   it!=phase0_histContainer_.end();   it++) it->second->Sumw2(); //call Sumw2 on all the hists in phase0_histContainer_  
 
 }
@@ -168,7 +168,7 @@ ZmuonFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   //Check if there are at least four mu in the event
   if ((int)muons->size() <= 3){
       if (verboseFilter){
-         phase0_histContainer_["phase0_CutFlow"]->AddBinContent(1);
+         phase0_histContainer_["phase0_CutFlow"]->Fill(1);
       }
       return false; // If there are not at least four muons, the filter function will return false 
     }
@@ -208,7 +208,7 @@ ZmuonFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
  if (!flagPassTrigger) { //If, after going through all the trigger bits, we have not switched the flagPassTrigger to true and it is still false, reject the event 
 //       std::cout << "DID NOT PASS TRIGGER" << std::endl;
        if (verboseFilter){
-          phase0_histContainer_["phase0_CutFlow"]->AddBinContent(2);
+          phase0_histContainer_["phase0_CutFlow"]->Fill(2);
        }
        return false;
   }
@@ -276,7 +276,7 @@ ZmuonFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 //  //     std::cout << iM1->pt(), iM2->pt(), iM3->pt(), iM4->pt() << std::endl;
  //       std::cout << "FAILED flagTotCharge_pT_Eta_InvMassOf4Mu" << std::endl; 
        if (verboseFilter) {
-          phase0_histContainer_["phase0_CutFlow"]->AddBinContent(3);
+          phase0_histContainer_["phase0_CutFlow"]->Fill(3);
        
        }
        return false;
