@@ -1501,8 +1501,9 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
                  
                //   //The statement below is normally what you want commented in 
                  if (! (isZplusY || isZOnly)){
-                   continue;
                    histContainer_["CutFlow"]->Fill(16);
+                   continue;
+                   
                  }
                 //***** TRIGGER EFFICIENCY STUDIES *****************
 
