@@ -1821,24 +1821,28 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
                         if (filterName.find("hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07") != std::string::npos){
                           isTriggerMuon = true;
                           std::cout << "Found a filterName match for singleMu2017Trig1Fired" << std::endl;
+                          break;
                         }
                       }
                       if (doubleMu2017Trig1Fired){
                         if (filterName.find("hltDiMuon178Mass8Filtered") != std::string::npos){
                           isTriggerMuon = true;
-                          std::cout << "Found a filterName match for doubleMu2017Trig1Fired" << std::endl; 
+                          std::cout << "Found a filterName match for doubleMu2017Trig1Fired" << std::endl;
+                          break; 
                         }
                       }
                       if (tripleMu2017Trig1Fired){
                         if (filterName.find("hltL3fL1TripleMu553f0Filtered12105") != std::string::npos){
                           isTriggerMuon = true;
                           std::cout << "Found a filterName match for tripleMu2017Trig1Fired" << std::endl;
+                          break;
                         }
                       }
                       if (tripleMu2017Trig2Fired){
                         if (filterName.find("hltTripleMu555TripleDZ0p2") != std::string::npos){
                           isTriggerMuon = true;
-                          std::cout << "Found a filterName match for tripleMu2017Trig2Fired" << std::endl; 
+                          std::cout << "Found a filterName match for tripleMu2017Trig2Fired" << std::endl;
+                          break; 
                         }
                       }
                       
@@ -1848,18 +1852,21 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
                         if (filterName.find("hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07") != std::string::npos){
                           isTriggerMuon = true;
                           std::cout << "Found a filterName match for singleMu2018Trig1Fired" << std::endl;
+                          break;
                         }
                       }
                       if (doubleMu2018Trig1Fired){
                         if (filterName.find("hltDiMuon178Mass3p8Filtered") != std::string::npos){
                           isTriggerMuon = true;
                           std::cout << "Found a filterName match for doubleMu2018Trig1Fired" << std::endl; 
+                          break;
                         }
                       }
                       if (doubleMu2018Trig2Fired){
                         if (filterName.find("hltDiMuon178Mass8Filtered") != std::string::npos){
                           isTriggerMuon = true;
                           std::cout << "Found a filterName match for doubleMu2018Trig2Fired" << std::endl; 
+                          break;
                         }
                       } 
                       
@@ -1867,12 +1874,14 @@ void ZmuonAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
                         if (filterName.find("hltL3fL1TripleMu553f0Filtered12105") != std::string::npos){
                           isTriggerMuon = true;
                           std::cout << "Found a filterName match for tripleMu2018Trig1Fired" << std::endl;
+                          break;
                         }
                       }
                       if (tripleMu2018Trig2Fired){
                         if (filterName.find("hltTripleMu555TripleDZ0p2") != std::string::npos){
                           isTriggerMuon = true;
                           std::cout << "Found a filterName match for tripleMu2018Trig2Fired" << std::endl; 
+                          break; 
                         }
                       }
                       
